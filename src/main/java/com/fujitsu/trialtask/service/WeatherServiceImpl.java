@@ -73,12 +73,13 @@ public class WeatherServiceImpl implements WeatherService {
     }
 
     private WeatherPhenomenon decidePhenomenon(String phenomenon) {
-        if (WeatherPhenomenon.GLAZE.getKeywordsRelatedToPhenomenon().contains(phenomenon))
-            return WeatherPhenomenon.GLAZE;
-        else if (WeatherPhenomenon.SNOWY.getKeywordsRelatedToPhenomenon().contains(phenomenon))
-            return WeatherPhenomenon.SNOWY;
-        else if (WeatherPhenomenon.RAINY.getKeywordsRelatedToPhenomenon().contains(phenomenon))
-            return WeatherPhenomenon.RAINY;
-        else return WeatherPhenomenon.NONE;
+
+        for (WeatherPhenomenon w : WeatherPhenomenon.values()) {
+            for (String keyword: w.getKeywordsRelatedToPhenomenon()) {
+                if (phenomenon.contains(keyword)) return w;
+            }
+        }
+
+        return WeatherPhenomenon.NONE;
     }
 }
