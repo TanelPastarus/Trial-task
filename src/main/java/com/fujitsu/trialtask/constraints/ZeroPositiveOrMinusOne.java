@@ -9,7 +9,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Constraint(validatedBy = ZeroPositiveOrMinusOneValidator.class)
-@Target({ ElementType.FIELD})
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ZeroPositiveOrMinusOne {
     String message() default "Value must be 0, -1, or positive";

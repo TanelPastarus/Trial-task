@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExtraFeeRepository extends CrudRepository<ExtraFees, Long> {
-    ExtraFees findVehicleExtraFeesByVehicle(Vehicle vehicle);
+    ExtraFees findExtraFeesByVehicle(Vehicle vehicle);
 }

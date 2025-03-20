@@ -9,12 +9,15 @@ import com.fujitsu.trialtask.model.ExtraFees;
 import com.fujitsu.trialtask.model.Weather;
 import com.fujitsu.trialtask.repository.CityBaseFeeRepository;
 import com.fujitsu.trialtask.repository.ExtraFeeRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DeliveryServiceImpl implements DeliveryService {
+    private static final double NO_EXTRA_FEE = 0.0;
+    private static final int VEHICLE_IS_FORBIDDEN_VALUE = -1;
+
     private final ExtraFeeRepository extraFeesRepository;
     private final WeatherService weatherService;
     private final CityBaseFeeRepository cityBaseFeeRepository;
@@ -25,7 +28,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         Vehicle v = Vehicle.valueOf(vehicle.toUpperCase());
 
         Weather w = weatherService.findLatestWeatherByCity(c);
-        ExtraFees e = extraFeesRepository.findVehicleExtraFeesByVehicle(v);
+        ExtraFees e = extraFeesRepository.findExtraFeesByVehicle(v);
         CityBaseFee cbf = cityBaseFeeRepository.findCityBaseFeeByCity(c);
 
         double extrafee = 0;
@@ -42,6 +45,38 @@ public class DeliveryServiceImpl implements DeliveryService {
         return basefee + extrafee;
     }
 
+    @Override
+    public void updateCityBaseFee(CityBaseFee newCityBaseFee) {
+        City c = newCityBaseFee.getCity();
+
+        CityBaseFee cbf = cityBaseFeeRepository.findCityBaseFeeByCity(c);
+
+        cbf.setCity(c);
+        cbf.setBikeFee(newCityBaseFee.getBikeFee());
+        cbf.setCarFee(newCityBaseFee.getCarFee());
+        cbf.setScooterFee(newCityBaseFee.getScooterFee());
+        cityBaseFeeRepository.save(cbf);
+    }
+
+    @Override
+    public void updateExtraFees(ExtraFees newExtraFees) {
+        Vehicle v = newExtraFees.getVehicle();
+
+        ExtraFees e = extraFeesRepository.findExtraFeesByVehicle(v);
+
+        e.setAirTemperatureFeeUnderMinus10(newExtraFees.getAirTemperatureFeeUnderMinus10());
+        e.setAirTemperatureFeeBetweenMinus10And0(newExtraFees.getAirTemperatureFeeBetweenMinus10And0());
+
+        e.setWeatherPhenomenonFeeRainy(newExtraFees.getWeatherPhenomenonFeeRainy());
+        e.setWeatherPhenomenonFeeGlaze(newExtraFees.getWeatherPhenomenonFeeGlaze());
+        e.setWeatherPhenomenonFeeSnowy(newExtraFees.getWeatherPhenomenonFeeSnowy());
+
+        e.setWindSpeedFeeOver20(newExtraFees.getWindSpeedFeeOver20());
+        e.setWindSpeedFeeBetween10And20(newExtraFees.getWindSpeedFeeBetween10And20());
+
+        extraFeesRepository.save(e);
+    }
+
     private double calculateWeatherExtraFees(ExtraFees e, Weather w) {
         Double windSpeedFee;
         Double airTemperatureFee;
@@ -55,9 +90,12 @@ public class DeliveryServiceImpl implements DeliveryService {
         airTemperatureFee = calculateAirTemperatureFee(e, airTemperature);
         weatherPhenomenonFee = calculateWeatherPhenomenonFee(e, weatherPhenomenon);
 
-        if (weatherPhenomenonFee == -1 || windSpeedFee == -1 || airTemperatureFee == -1) throw new BadWeatherException();
+        if (weatherPhenomenonFee == VEHICLE_IS_FORBIDDEN_VALUE ||
+                windSpeedFee == VEHICLE_IS_FORBIDDEN_VALUE ||
+                airTemperatureFee == VEHICLE_IS_FORBIDDEN_VALUE)
+            throw new BadWeatherException();
 
-        return airTemperatureFee + windSpeedFee + airTemperatureFee;
+        return airTemperatureFee + windSpeedFee + weatherPhenomenonFee;
     }
 
     private Double calculateWeatherPhenomenonFee(ExtraFees e, WeatherPhenomenon weatherPhenomenon) {
@@ -70,7 +108,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (weatherPhenomenon == WeatherPhenomenon.GLAZE) {
             return e.getWeatherPhenomenonFeeGlaze();
         }
-        return 0.0;
+        return NO_EXTRA_FEE;
     }
 
     private Double calculateAirTemperatureFee(ExtraFees e, double airTemperature) {
@@ -80,7 +118,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (airTemperature <= 0) {
             return e.getAirTemperatureFeeBetweenMinus10And0();
         }
-        return 0.0;
+        return NO_EXTRA_FEE;
     }
 
     private Double calculateWindSpeedFee(ExtraFees e, double windSpeed) {
@@ -90,6 +128,6 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (windSpeed >= 10) {
             return e.getWindSpeedFeeBetween10And20();
         }
-        return 0.0;
+        return NO_EXTRA_FEE;
     }
 }
