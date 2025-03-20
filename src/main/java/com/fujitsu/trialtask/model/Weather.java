@@ -4,17 +4,16 @@ import com.fujitsu.trialtask.enums.City;
 import com.fujitsu.trialtask.enums.WeatherPhenomenon;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.sql.Timestamp;
 
 @Entity
-@NoArgsConstructor
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Weather {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

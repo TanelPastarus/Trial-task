@@ -23,7 +23,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final CityBaseFeeRepository cityBaseFeeRepository;
 
     @Override
-    public double findDeliveryFee(String vehicle, String city) {
+    public double findDeliveryFee(String city, String vehicle) {
         City c = City.valueOf(city.toUpperCase());
         Vehicle v = Vehicle.valueOf(vehicle.toUpperCase());
 
@@ -51,10 +51,10 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         CityBaseFee cbf = cityBaseFeeRepository.findCityBaseFeeByCity(c);
 
-        cbf.setCity(c);
         cbf.setBikeFee(newCityBaseFee.getBikeFee());
         cbf.setCarFee(newCityBaseFee.getCarFee());
         cbf.setScooterFee(newCityBaseFee.getScooterFee());
+
         cityBaseFeeRepository.save(cbf);
     }
 

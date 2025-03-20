@@ -27,7 +27,7 @@ public class Controller {
 
     @GetMapping("/fee/{city}/{vehicle}")
     public ResponseEntity<Double> getDeliveryFee(@PathVariable String city, @PathVariable String vehicle) {
-        double fee = deliveryService.findDeliveryFee(vehicle, city);
+        double fee = deliveryService.findDeliveryFee(city, vehicle);
         return new ResponseEntity<>(fee, HttpStatus.OK);
     }
 

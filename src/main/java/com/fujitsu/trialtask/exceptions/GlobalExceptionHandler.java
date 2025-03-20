@@ -3,6 +3,7 @@ package com.fujitsu.trialtask.exceptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,5 +34,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
         String errorMessage = String.valueOf(Objects.requireNonNull(ex.getBindingResult().getFieldError()).getDefaultMessage());
         return new ResponseEntity<>("Values " + errorMessage, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<String> handleMethodNotSupported(HttpRequestMethodNotSupportedException m) {
+        return new ResponseEntity<>(m.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
     }
 }
