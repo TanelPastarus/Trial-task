@@ -24,16 +24,31 @@ import java.time.Instant;
 public class WeatherServiceImpl implements WeatherService {
     private final WeatherRepository weatherRepository;
 
+
+    /**
+     * Saves Weather object to the database
+     *
+     * @param weather - weather data
+     */
     @Override
     public void saveWeather(Weather weather) {
         weatherRepository.save(weather);
     }
 
+    /**
+     * Finds the latest weather data for that city
+     *
+     * @param city - city name
+     * @return - weather data
+     */
     @Override
     public Weather findLatestWeatherByCity(City city) {
         return weatherRepository.findTop1WeatherByNameOrderByTimestampDesc(city);
     }
 
+    /**
+     * Updates weather data from the Ilmateenistus XML
+     */
     @Override
     public void updateWeatherData() throws ParserConfigurationException, IOException, SAXException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -55,6 +70,13 @@ public class WeatherServiceImpl implements WeatherService {
         }
     }
 
+    /**
+     * Creates a new Weather object that is saved into the repository with data from
+     * the Ilmateenistus XML
+     *
+     * @param city - City object
+     * @param element - XML element
+     */
     private void saveNewWeather(City city, Element element) {
         Weather weather = new Weather();
 
@@ -72,6 +94,12 @@ public class WeatherServiceImpl implements WeatherService {
 
     }
 
+    /**
+     * Loops through the WeatherPhenomenon enum keywords that are associated with
+     * that phenomenon to decide what phenomenon enum it should be
+     * @param phenomenon - phenomenon
+     * @return WeatherPhenomenon object
+     */
     private WeatherPhenomenon decidePhenomenon(String phenomenon) {
 
         for (WeatherPhenomenon w : WeatherPhenomenon.values()) {

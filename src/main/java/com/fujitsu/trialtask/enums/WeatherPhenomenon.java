@@ -8,6 +8,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
+// Each enum has a list of keywords associated with that phenomenon
 public enum WeatherPhenomenon {
     SNOWY(new ArrayList<>(List.of("snow", "sleet"))),
     RAINY(new ArrayList<>(List.of("rain", "shower"))),

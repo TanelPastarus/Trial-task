@@ -22,6 +22,13 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final WeatherService weatherService;
     private final CityBaseFeeRepository cityBaseFeeRepository;
 
+    /**
+     * Finds the delivery fee for a city and vehicle
+     *
+     * @param city - the city
+     * @param vehicle - the vehicle
+     * @return the delivery fee
+     */
     @Override
     public double findDeliveryFee(String city, String vehicle) {
         City c = City.valueOf(city.toUpperCase());
@@ -45,6 +52,11 @@ public class DeliveryServiceImpl implements DeliveryService {
         return basefee + extrafee;
     }
 
+    /**
+     * Updates the base fee for a city
+     *
+     * @param newCityBaseFee - the new CityBaseFee object
+     */
     @Override
     public void updateCityBaseFee(CityBaseFee newCityBaseFee) {
         City c = newCityBaseFee.getCity();
@@ -58,6 +70,11 @@ public class DeliveryServiceImpl implements DeliveryService {
         cityBaseFeeRepository.save(cbf);
     }
 
+    /**
+     * Updates the extra fees for a vehicle
+     *
+     * @param newExtraFees - the updated ExtraFees object
+     */
     @Override
     public void updateExtraFees(ExtraFees newExtraFees) {
         Vehicle v = newExtraFees.getVehicle();
@@ -77,6 +94,16 @@ public class DeliveryServiceImpl implements DeliveryService {
         extraFeesRepository.save(e);
     }
 
+    /**
+     * Helper method for findDeliveryFee, that calculates extra fees (air temperature,
+     * wind speed and weather phenomenon fees)
+     * If any of the values are -1, then the usage of the vehicle is forbidden due to bad weather.
+     *
+     * @param e - ExtraFees object
+     * @param w - Weather object
+     * @throws BadWeatherException if usage of the vehicle is forbidden due to bad weather
+     * @return sum of extra fees
+     */
     private double calculateWeatherExtraFees(ExtraFees e, Weather w) {
         Double windSpeedFee;
         Double airTemperatureFee;
@@ -98,6 +125,14 @@ public class DeliveryServiceImpl implements DeliveryService {
         return airTemperatureFee + windSpeedFee + weatherPhenomenonFee;
     }
 
+    /**
+     * Helper method for calculateWeatherExtraFees, that calculates
+     * the weather phenomenon extra fee
+     *
+     * @param e - ExtraFees object
+     * @param weatherPhenomenon - WeatherPhenomenon object
+     * @return weather phenomenon fee
+     */
     private Double calculateWeatherPhenomenonFee(ExtraFees e, WeatherPhenomenon weatherPhenomenon) {
         if (weatherPhenomenon == WeatherPhenomenon.SNOWY) {
             return e.getWeatherPhenomenonFeeSnowy();
@@ -111,6 +146,14 @@ public class DeliveryServiceImpl implements DeliveryService {
         return NO_EXTRA_FEE;
     }
 
+    /**
+     * Helper method for calculateWeatherExtraFees, that calculates
+     * the air temperature extra fee
+     *
+     * @param e - ExtraFees object
+     * @param airTemperature - air temperature
+     * @return air temperature fee
+     */
     private Double calculateAirTemperatureFee(ExtraFees e, double airTemperature) {
         if (airTemperature < -10) {
             return e.getAirTemperatureFeeUnderMinus10();
@@ -121,6 +164,14 @@ public class DeliveryServiceImpl implements DeliveryService {
         return NO_EXTRA_FEE;
     }
 
+    /**
+     * Helper method for calculateWeatherExtraFees, that calculates
+     * the wind speed extra fee
+     *
+     * @param e - ExtraFees object
+     * @param windSpeed - wind speed
+     * @return wind speed fee
+     */
     private Double calculateWindSpeedFee(ExtraFees e, double windSpeed) {
         if (windSpeed > 20) {
             return e.getWindSpeedFeeOver20();

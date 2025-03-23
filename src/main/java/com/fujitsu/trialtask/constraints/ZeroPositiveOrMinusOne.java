@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = ZeroPositiveOrMinusOneValidator.class)
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
+// Custom annotation that is used to validate that a number is either 0, positive, or -1.
 public @interface ZeroPositiveOrMinusOne {
     String message() default "Value must be 0, -1, or positive";
     Class<?>[] groups() default {};

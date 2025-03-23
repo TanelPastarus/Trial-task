@@ -36,6 +36,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>("Values " + errorMessage, HttpStatus.BAD_REQUEST);
     }
 
+    // When the user tries to use a method that is not allowed
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<String> handleMethodNotSupported(HttpRequestMethodNotSupportedException m) {
         return new ResponseEntity<>(m.getMessage(), HttpStatus.METHOD_NOT_ALLOWED);
