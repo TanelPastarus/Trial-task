@@ -43,7 +43,7 @@ The weather table contains the weather data for each city. It contains air tempe
 
 ### Else
 
-The cronjob is running every every hour on minut 15 to update the weather database with new weather data. It can be changed from `application.resources` file.
+The cronjob is running once every hour on minute 15 to update the weather database with new weather data. It can be changed from `application.resources` file.
 
 The data.sql file includes the initial data for delivery base fees and vehicle extra fees (that were provided in the task description).
 
