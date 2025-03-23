@@ -1,0 +1,33 @@
+### Example 1
+
+PUT http://localhost:8080/extrafee/update
+Content-Type: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "vehicle":"BIKE",
+  "weatherPhenomenonFeeGlaze":1.0,
+  "weatherPhenomenonFeeRainy":3.0,
+  "windSpeedFeeBetween10And20":0,
+  "airTemperatureFeeBetweenMinus10And0":1,
+  "airTemperatureFeeUnderMinus10": -1,
+  "weatherPhenomenonFeeSnowy":22,
+  "windSpeedFeeOver20":0
+}
+
+### Example 2
+
+PUT http://localhost:8080/basefee/update
+Content-Type: application/json
+Connection: Keep-Alive
+User-Agent: Apache-HttpClient/4.5.14 (Java/17.0.10)
+Accept-Encoding: br,deflate,gzip,x-gzip
+
+{
+  "city": "TALLINN",
+  "bikeFee": -3,
+  "carFee": 11,
+  "scooterFee":12
+}
